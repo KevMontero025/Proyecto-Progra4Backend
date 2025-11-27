@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Proyecto.BC.Modelos;
 using Proyecto.BW.Interfaces.BW;
 
@@ -52,7 +51,10 @@ namespace Proyecto.API.Controllers
         {
             try
             {
-                var resultado = await usuarioBW.registrarUsuario(usuario);
+                // TODO: cuando tengas JWT, sacar el id del token
+                int usuarioEjecutorId = 1;
+
+                var resultado = await usuarioBW.registrarUsuario(usuario, usuarioEjecutorId);
                 return Ok(resultado);
             }
             catch (Exception ex)
@@ -69,7 +71,9 @@ namespace Proyecto.API.Controllers
                 if (id != usuario.UsuarioId)
                     return BadRequest("El ID del usuario no coincide con el parámetro proporcionado");
 
-                var resultado = await usuarioBW.actualizarUsuario(usuario, id);
+                int usuarioEjecutorId = 1; // luego del JWT
+
+                var resultado = await usuarioBW.actualizarUsuario(usuario, id, usuarioEjecutorId);
 
                 if (!resultado)
                     return NotFound("Usuario no encontrado");
@@ -87,7 +91,9 @@ namespace Proyecto.API.Controllers
         {
             try
             {
-                var resultado = await usuarioBW.eliminarUsuario(id);
+                int usuarioEjecutorId = 1; // luego del JWT
+
+                var resultado = await usuarioBW.eliminarUsuario(id, usuarioEjecutorId);
                 if (!resultado)
                     return NotFound("Usuario no encontrado");
 

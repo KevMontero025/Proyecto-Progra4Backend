@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Proyecto.BC.Modelos;
 using Proyecto.BW.Interfaces.BW;
 
@@ -9,25 +8,11 @@ namespace Proyecto.API.Controllers
     [ApiController]
     public class ProveedorServicioController : ControllerBase
     {
-        private readonly IProveedorServicioBW proveedorBW;
+        private readonly IProveedorServicioBW proveedorServicioBW;
 
-        public ProveedorServicioController(IProveedorServicioBW proveedorBW)
+        public ProveedorServicioController(IProveedorServicioBW proveedorServicioBW)
         {
-            this.proveedorBW = proveedorBW;
-        }
-
-        [HttpGet(Name = "GetProveedores")]
-        public async Task<ActionResult<IEnumerable<ProveedorServicio>>> Get()
-        {
-            try
-            {
-                var lista = await proveedorBW.obtenerProveedores();
-                return Ok(lista);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error interno: {ex.Message}");
-            }
+            this.proveedorServicioBW = proveedorServicioBW;
         }
 
         [HttpGet("{id}", Name = "GetProveedorById")]
@@ -35,11 +20,25 @@ namespace Proyecto.API.Controllers
         {
             try
             {
-                var proveedor = await proveedorBW.obtenerProveedor(id);
+                var proveedor = await proveedorServicioBW.obtenerProveedor(id);
                 if (proveedor == null)
                     return NotFound("Proveedor no encontrado");
 
                 return Ok(proveedor);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno: {ex.Message}");
+            }
+        }
+
+        [HttpGet(Name = "GetProveedores")]
+        public async Task<ActionResult<IEnumerable<ProveedorServicio>>> Get()
+        {
+            try
+            {
+                var proveedores = await proveedorServicioBW.obtenerProveedores();
+                return Ok(proveedores);
             }
             catch (Exception ex)
             {
@@ -52,7 +51,9 @@ namespace Proyecto.API.Controllers
         {
             try
             {
-                var resultado = await proveedorBW.registrarProveedor(proveedor);
+                int usuarioAccionId = 1; // luego vendrá del JWT
+
+                var resultado = await proveedorServicioBW.registrarProveedor(proveedor, usuarioAccionId);
                 return Ok(resultado);
             }
             catch (Exception ex)
@@ -69,7 +70,9 @@ namespace Proyecto.API.Controllers
                 if (id != proveedor.ProveedorServicioId)
                     return BadRequest("El ID del proveedor no coincide con el parámetro");
 
-                var resultado = await proveedorBW.actualizarProveedor(proveedor, id);
+                int usuarioAccionId = 1;
+
+                var resultado = await proveedorServicioBW.actualizarProveedor(proveedor, id, usuarioAccionId);
                 if (!resultado)
                     return NotFound("Proveedor no encontrado");
 
@@ -86,7 +89,9 @@ namespace Proyecto.API.Controllers
         {
             try
             {
-                var resultado = await proveedorBW.eliminarProveedor(id);
+                int usuarioAccionId = 1;
+
+                var resultado = await proveedorServicioBW.eliminarProveedor(id, usuarioAccionId);
                 if (!resultado)
                     return NotFound("Proveedor no encontrado");
 

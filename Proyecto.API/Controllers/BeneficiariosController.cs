@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Proyecto.BC.Modelos;
 using Proyecto.BW.Interfaces.BW;
 
@@ -53,7 +51,10 @@ namespace Proyecto.API.Controllers
         {
             try
             {
-                var resultado = await beneficiarioBW.registrarBeneficiario(beneficiario);
+                // TODO: sacar del JWT cuando tengas autenticación
+                int usuarioAccionId = 1;
+
+                var resultado = await beneficiarioBW.registrarBeneficiario(beneficiario, usuarioAccionId);
                 return Ok(resultado);
             }
             catch (Exception ex)
@@ -70,7 +71,9 @@ namespace Proyecto.API.Controllers
                 if (id != beneficiario.TerceroBeneficiarioId)
                     return BadRequest("El ID del beneficiario no coincide con el parámetro");
 
-                var resultado = await beneficiarioBW.actualizarBeneficiario(beneficiario, id);
+                int usuarioAccionId = 1; // luego del JWT
+
+                var resultado = await beneficiarioBW.actualizarBeneficiario(beneficiario, id, usuarioAccionId);
                 if (!resultado)
                     return NotFound("Beneficiario no encontrado");
 
@@ -87,7 +90,9 @@ namespace Proyecto.API.Controllers
         {
             try
             {
-                var resultado = await beneficiarioBW.eliminarBeneficiario(id);
+                int usuarioAccionId = 1; // luego del JWT
+
+                var resultado = await beneficiarioBW.eliminarBeneficiario(id, usuarioAccionId);
                 if (!resultado)
                     return NotFound("Beneficiario no encontrado");
 

@@ -61,6 +61,12 @@ namespace Proyecto.DA.Acciones
             return bancoContext.Cliente.FirstOrDefaultAsync(c => c.Identificacion == identificacion);
         }
 
+        // 🔧 MÉTODO NUEVO: requerido por IClienteDA y usado en GestionClienteBW
+        public Task<Cliente?> obtenerPorUsuarioId(int usuarioId)
+        {
+            return bancoContext.Cliente.FirstOrDefaultAsync(c => c.UsuarioId == usuarioId);
+        }
+
         public async Task<bool> registrarCliente(Cliente cliente)
         {
             try

@@ -1,5 +1,7 @@
-﻿
-
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 using Proyecto.BC.Modelos;
 using Proyecto.BC.Modelos.Enum;
@@ -79,7 +81,12 @@ namespace Proyecto.BW.CU
                 query = query.Where(t => t.TipoOperacion == tipoOperacion.Value);
 
             if (!string.IsNullOrWhiteSpace(estadoOperacion))
-                query = query.Where(t => t.EstadoOperacion == estadoOperacion);
+            {
+                if (Enum.TryParse<EstadoOperacionCuenta>(estadoOperacion, true, out var estadoEnum))
+                {
+                    query = query.Where(t => t.EstadoOperacion == estadoEnum);
+                }
+            }
 
             return query
                 .OrderByDescending(t => t.Fecha)

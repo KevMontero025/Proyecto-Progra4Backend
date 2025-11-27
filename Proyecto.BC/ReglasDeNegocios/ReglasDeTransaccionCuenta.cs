@@ -1,5 +1,5 @@
-﻿
-using Proyecto.BC.Modelos;
+﻿using Proyecto.BC.Modelos;
+using Proyecto.BC.Modelos.Enum;
 
 namespace Proyecto.BC.ReglasDeNegocios
 {
@@ -20,7 +20,7 @@ namespace Proyecto.BC.ReglasDeNegocios
             if (tx.Monto == 0)
                 throw new Exception("El monto de la transaccion no puede ser cero");
 
-            if (string.IsNullOrWhiteSpace(tx.EstadoOperacion))
+            if (!Enum.IsDefined(typeof(EstadoOperacionCuenta), tx.EstadoOperacion))
                 throw new Exception("El estado de la transaccion es obligatorio");
         }
 

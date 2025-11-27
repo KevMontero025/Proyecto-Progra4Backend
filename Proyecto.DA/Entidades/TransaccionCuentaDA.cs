@@ -1,11 +1,7 @@
 ﻿using Proyecto.BC.Modelos.Enum;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Proyecto.DA.Entidades
 {
@@ -20,13 +16,13 @@ namespace Proyecto.DA.Entidades
         public int CuentaId { get; set; }
 
         [ForeignKey("CuentaId")]
-        public CuentaDA Cuenta { get; set; }
+        public CuentaDA Cuenta { get; set; } = null!;
 
         [Required]
         public DateTime Fecha { get; set; }
 
         [Required]
-        public TipoTransaccion Tipo { get; set; }
+        public TipoOperacionCuenta Tipo { get; set; }
 
         [Required]
         public decimal Monto { get; set; }
@@ -34,7 +30,7 @@ namespace Proyecto.DA.Entidades
         [Required]
         public decimal SaldoResultante { get; set; }
 
-        public string Descripcion { get; set; }
+        public string? Descripcion { get; set; }
 
         public int? ReferenciaInternaId { get; set; } // Id de transferencia o pago
     }
