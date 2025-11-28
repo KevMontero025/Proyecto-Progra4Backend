@@ -19,7 +19,7 @@ namespace Proyecto.DA.Acciones
         {
             // Busca el registro de consumo de ese cliente en esa fecha
             return bancoContext.ConsumoLimiteDiario
-                .FirstAsync(c => c.ClienteId == clienteId && c.Fecha.Date == fecha.Date);
+                .FirstOrDefaultAsync(c => c.ClienteId == clienteId && c.Fecha.Date == fecha.Date);
         }
 
         public Task<List<ConsumoLimiteDiario>> obtenerConsumosPorCliente(int clienteId)

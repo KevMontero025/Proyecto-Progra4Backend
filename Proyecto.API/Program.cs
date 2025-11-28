@@ -23,7 +23,8 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddDbContext<BancoContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+     sqlServerOptions => sqlServerOptions.EnableRetryOnFailure()));
 
 // Add services to the container.
 builder.Services.AddTransient<IAuditoriaBW, GestionAuditoriaBW>();
