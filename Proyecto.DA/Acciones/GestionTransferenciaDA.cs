@@ -28,14 +28,17 @@ namespace Proyecto.DA.Acciones
 
         public async Task<bool> crearTransferencia(Transferencia transferencia)
         {
+            await using var transaction = await bancoContext.Database.BeginTransactionAsync();
             try
             {
                 await bancoContext.Transferencia.AddAsync(transferencia);
                 await bancoContext.SaveChangesAsync();
+                await transaction.CommitAsync(); 
                 return true;
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
                 throw new Exception("Error al crear la transferencia: " + ex.Message);
             }
         }

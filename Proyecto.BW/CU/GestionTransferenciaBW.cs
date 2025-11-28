@@ -19,6 +19,7 @@ namespace Proyecto.BW.CU
         private readonly IAuditoriaBW auditoriaBW;
         private readonly IComprobanteBW comprobanteBW;
         private readonly ITransaccionCuentaBW transaccionCuentaBW;
+        private readonly IClienteDA clienteDA;
 
         public GestionTransferenciaBW(
             ITransferenciaDA transferenciaDA,
@@ -28,7 +29,8 @@ namespace Proyecto.BW.CU
             IParametroSistemaDA parametroDA,
             IAuditoriaBW auditoriaBW,
             IComprobanteBW comprobanteBW,
-            ITransaccionCuentaBW transaccionCuentaBW)
+            ITransaccionCuentaBW transaccionCuentaBW,
+            IClienteDA clienteDA)
         {
             this.transferenciaDA = transferenciaDA;
             this.cuentaDA = cuentaDA;
@@ -38,6 +40,7 @@ namespace Proyecto.BW.CU
             this.auditoriaBW = auditoriaBW;
             this.comprobanteBW = comprobanteBW;
             this.transaccionCuentaBW = transaccionCuentaBW;
+            this.clienteDA = clienteDA;
         }
 
         //Helper para referencia única de transferencias
@@ -165,14 +168,30 @@ namespace Proyecto.BW.CU
                 {
                     transferencia.NecesitaAprobacion = false;
                     transferencia.Estado = EstadoTransferencia.Exitosa;
+
+                    //  Devita de la  cuenta de origen
+                    cuentaOrigen.Saldo -= (transferencia.Monto + transferencia.Comision);
+                    await cuentaDA.actualizarCuenta(cuentaOrigen, cuentaOrigen.CuentaId);
+
+                    //  Acredita a la cuenta de destino (si es transferencia interna), recibiendo el monto completo sin comisiones
+                    if (transferencia.CuentaDestinoId.HasValue)
+                    {
+                        var cuentaDestino = await cuentaDA.obtenerCuenta(transferencia.CuentaDestinoId.Value);
+                        cuentaDestino.Saldo += transferencia.Monto; 
+                        await cuentaDA.actualizarCuenta(cuentaDestino, cuentaDestino.CuentaId);
+                    }
+                    
                 }
             }
 
             // Guardar
             var resultado = await transferenciaDA.crearTransferencia(transferencia);
 
+
+
             if (resultado)
             {
+               
                 //Si ya salio exitosa y no es programada, generar comprobante de una vez
                 if (!transferencia.EsProgramada && transferencia.Estado == EstadoTransferencia.Exitosa)
                 {
