@@ -13,12 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Configurar CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins",
+    options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.AllowAnyOrigin()
+            policy.WithOrigins("http://localhost:8100", "https://localhost:8100")
                   .AllowAnyMethod()
-                  .AllowAnyHeader();
+                  .AllowAnyHeader()
+                  .AllowCredentials();
         });
 });
 
@@ -79,7 +80,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHostedService<EjecutarTransferenciasProgramadasJob>();
 
 var app = builder.Build();
-app.UseCors("AllowAllOrigins");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -87,12 +87,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseAuthentication();
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection();    // 1. Redirección HTTPS
 
-app.UseAuthorization();
+app.UseCors("AllowFrontend"); // 2. CORS (DESPUÉS de HTTPS Redirection)
 
-app.MapControllers();
+app.UseAuthentication();      // 3. Autenticación
+
+app.UseAuthorization();       // 4. Autorización
+
+app.MapControllers();         // 5. Controladores
 
 app.Run();
