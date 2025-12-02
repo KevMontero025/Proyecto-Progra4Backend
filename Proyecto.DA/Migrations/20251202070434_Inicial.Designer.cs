@@ -12,7 +12,7 @@ using Proyecto.DA.Config;
 namespace Proyecto.DA.Migrations
 {
     [DbContext(typeof(BancoContext))]
-    [Migration("20251202061836_Inicial")]
+    [Migration("20251202070434_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
